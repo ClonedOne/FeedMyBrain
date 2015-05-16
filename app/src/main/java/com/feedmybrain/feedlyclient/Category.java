@@ -1,0 +1,31 @@
+package com.feedmybrain.feedlyclient;
+
+/**
+ * Created by blackecho on 16/05/15.
+ */
+public class Category {
+
+    private String id; // category id
+    private String label; // category label
+
+    public Category(String id, String label) {
+        this.id = id;
+        this.label = label;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+}
