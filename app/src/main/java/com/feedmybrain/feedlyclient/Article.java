@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.feedmybrain.util.Constants;
 
+import java.io.IOException;
 import java.util.LinkedList;
 
 import org.jsoup.Jsoup;
@@ -22,21 +23,23 @@ public class Article {
     private Long published;
     private String author;
     private LinkedList<Category> categories;
-    private String content;
+    private String summary;
     private String website;
     private String href;
+    private String content;
 
-    public Article(String id, LinkedList<String> keywords, String title, Long published, String author, LinkedList<Category> categories, String content,
-                   String website, String href) {
+    public Article(String id, LinkedList<String> keywords, String title, Long published, String author, LinkedList<Category> categories, String summary,
+                   String website, String href, String content) {
         this.id = id;
         this.keywords = keywords;
         this.title = title;
         this.published = published;
         this.author = author;
         this.categories = categories;
-        this.content = content;
+        this.summary = summary;
         this.website = website;
         this.href = href;
+        this.content = content;
     }
 
 
@@ -88,7 +91,7 @@ public class Article {
         this.categories = categories;
     }
 
-    public String getContent() {
+    public String getSummary() {
         Document raw_content = Jsoup.parse(content);
         Elements paragraphs = raw_content.select("p");
         String article_content = "";
@@ -102,7 +105,7 @@ public class Article {
         return article_content;
     }
 
-    public void setContent(String content) {
+    public void setSummary(String content) {
         this.content = content;
     }
 
@@ -122,11 +125,37 @@ public class Article {
         this.href = href;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public String toString(){
         String res ="";
         res = res + "Article from: " + getWebsite() + ". From author: " + getAuthor() + ". " +
-                "Title: " + getTitle() + ". " + " Content: "; //+ getContent();
+                "Title: " + getTitle() + ". ";
         return res;
+    }
+
+    public String toFullArticle() {
+        String article_content = "";
+        try {
+            Document raw_content = Jsoup.connect(href).get();
+            Elements paragraphs = raw_content.select("p");
+            if (paragraphs.size() != 0) {
+                article_content = "";
+                for (Element p : paragraphs)
+                    article_content += p.text();
+            } else {
+                article_content = "Sorry, no content available for this article";
+            }
+        } catch (IOException ie) {
+            ie.printStackTrace();
+        }
+        return article_content;
     }
 
 }

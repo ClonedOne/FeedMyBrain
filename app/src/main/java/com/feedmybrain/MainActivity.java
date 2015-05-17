@@ -243,7 +243,7 @@ public class MainActivity extends Activity implements RestResponse {
                         if (streamElem.has("alternate")) {
                             href = streamElem.getJSONObject("alternate").getString("href");
                         }
-                        Article art = new Article(streamElem.getString("id"), ks, streamElem.getString("title"), streamElem.getLong("published"), author, cats, content, website, href);
+                        Article art = new Article(streamElem.getString("id"), ks, streamElem.getString("title"), streamElem.getLong("published"), author, cats, content, website, href, "");
                         articles.add(art);
                     }
                     feed.getArticlesFeed().put(subscription, articles);
