@@ -35,5 +35,6 @@ public class Constants {
         debug strings
      */
     public static final String DEBUG_NETWORK_TAG = "NetworkDebug";
+    public static final String DEBUG_FEEDLY = "FeedlyDebug";
 
 }

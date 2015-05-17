@@ -1,6 +1,15 @@
 package com.feedmybrain.feedlyclient;
 
+import android.util.Log;
+
+import com.feedmybrain.util.Constants;
+
 import java.util.LinkedList;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  * Created by blackecho on 16/05/15.
@@ -77,7 +86,17 @@ public class Article {
     }
 
     public String getContent() {
-        return content;
+        Document raw_content = Jsoup.parse(content);
+        Elements paragraphs = raw_content.select("p");
+        String article_content = "";
+        if (paragraphs.size() != 0) {
+            article_content = "";
+            for (Element p : paragraphs)
+                article_content += p.text();
+        } else {
+            article_content = "Sorry, no preview available for this article";
+        }
+        return article_content;
     }
 
     public void setContent(String content) {
@@ -95,7 +114,7 @@ public class Article {
     public String toString(){
         String res ="";
         res = res + "Article from: " + getWebsite() + ". From author: " + getAuthor() + ". " +
-                "Title: " + getTitle() + ". ";
+                "Title: " + getTitle() + ". " + " Content: " + getContent();
         return res;
     }
 
