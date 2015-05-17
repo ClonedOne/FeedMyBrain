@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -48,8 +49,10 @@ public class MainActivity extends Activity implements RestResponse {
 
     protected int blink = 0;
     protected int attention = 0;
-
+    protected boolean inReading = false;
+    protected boolean goOn = true;
     private Speaker speaker; // speaker object
+    private TextToSpeech tts;
 
     private Button toggle; // button to toggle the speech
 
@@ -85,6 +88,28 @@ public class MainActivity extends Activity implements RestResponse {
         //checkTTS();
 	    speaker = new Speaker(this);
         speaker.allow(true);
+        tts = speaker.getTts();
+        tts.setOnUtteranceProgressListener(
+                new UtteranceProgressListener() {
+                    @Override
+                    public void onStart(String utteranceId) {
+
+                    }
+
+                    @Override
+                    public void onDone(String utteranceId) {
+                        if (utteranceId.equals("Do you want to continue reading?")) {
+                            speaker.stop();
+                            displaySpeechRecognizer();
+                        }
+                    }
+
+                    @Override
+                    public void onError(String utteranceId) {
+
+                    }
+                }
+        );
 
 
        // handler = new MyBTHandler(this);
@@ -110,6 +135,11 @@ public class MainActivity extends Activity implements RestResponse {
         // Get the just created feed for this activity
         feed = app.getFeed();
 
+        getArticles();
+
+    }
+
+    private void getArticles(){
         feedlyClient = new FeedlyClient(Constants.authToken, this);
         feedlyClient.categoriesAPI();
         feedlyClient.subscriptionsAPI();
@@ -216,6 +246,8 @@ public class MainActivity extends Activity implements RestResponse {
             } catch (JSONException je) {
                 je.printStackTrace();
             }
+        } else if (requestDescription.equals(Constants.markersDesc)) {
+            Log.d("Mark as Read", response);
         }
     }
 
@@ -233,28 +265,48 @@ public class MainActivity extends Activity implements RestResponse {
     }
 
     public void speakit(View view) {
+        getArticles();
         displaySpeechRecognizer();
     }
     public void speakBrain () throws Exception{
         LinkedList<Article> articles = new LinkedList<>();
         String curKey = "";
-        while (feed.getArticlesFeed().size() > 0)
-        for (HashMap.Entry<String, LinkedList<Article>> entry : feed.getArticlesFeed().entrySet()) {
-            articles = entry.getValue();
-            curKey = entry.getKey();
-            for (Article art : articles){
-               // Log.d("ARTICLEDBG", "article is = " + art.toString());
-                speaker.speak(art.toString());
-                if (blink == 1)
+        inReading = true;
+        //goOn = true;
+        //while (goOn) {
+            for (HashMap.Entry<String, LinkedList<Article>> entry : feed.getArticlesFeed().entrySet()) {
+                if (goOn == false)
                     break;
-            }
-            if (blink == 1) {
-                blink = 0;
+                articles = entry.getValue();
+                curKey = entry.getKey();
+                for (Article art : articles) {
+                    // Log.d("ARTICLEDBG", "article is = " + art.toString());
+                    speaker.speak(art.toString());
+                    if (blink == 1) {
+                        Log.d("BLINKDBG", "blink received");
+                        speaker.speak("Blink Received");
+                        speaker.speak(art.getContent());
+                    }
+                }
+
+                if (blink == 1) {
+                    blink = 0;
+                    break;
+                }
                 break;
             }
-        }
-        feed.getArticlesFeed().remove(curKey);
+            LinkedList<Article> reads = feed.getArticlesFeed().get(curKey);
+            for (Article read : reads) {
+                feedlyClient.markAsReadAPI(read);
+            }
+            feed.getArticlesFeed().remove(curKey);
+            if (feed.getArticlesFeed().size() == 0)
+                getArticles();
+            speaker.speak("Do you want to continue reading?");
 
+            //wait(200L);
+        //}
+        //speaker.stop();
 
     }
 
@@ -299,8 +351,20 @@ public class MainActivity extends Activity implements RestResponse {
                     RecognizerIntent.EXTRA_RESULTS);
             spokenText = results.get(0);
             // Do something with spokenText
-            if (spokenText.equalsIgnoreCase("speak")){
+            if (spokenText.equalsIgnoreCase("yes") && inReading == true){
                 try {
+                    goOn = true;
+                    speakBrain();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else if (spokenText.equalsIgnoreCase("no") && inReading == true){
+                goOn = false;
+                inReading = false;
+            }
+            else if (spokenText.equalsIgnoreCase("speak")){
+                try {
+                    goOn = true;
                     speakBrain();
                 }
                 catch (Exception e){

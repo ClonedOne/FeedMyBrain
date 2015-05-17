@@ -114,7 +114,7 @@ public class Article {
     public String toString(){
         String res ="";
         res = res + "Article from: " + getWebsite() + ". From author: " + getAuthor() + ". " +
-                "Title: " + getTitle() + ". " + " Content: " + getContent();
+                "Title: " + getTitle() + ". " + " Content: "; //+ getContent();
         return res;
     }
 

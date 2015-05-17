@@ -66,7 +66,7 @@ public class FeedlyClient {
         request.setRequestDescription(Constants.subscriptionStreamDesc);
         request.setRequestType(Constants.getRequestType);
         request.setRequestHeader(headers);
-        request.execute(Constants.subscriptionStreamAPI + "?" + "streamId=" + subsc.getId() + "&" + "count=" + Constants.subscriptionStreamCount);
+        request.execute(Constants.subscriptionStreamAPI + "?" + "streamId=" + subsc.getId() + "&" + "count=" + Constants.subscriptionStreamCount + "&unreadOnly=true");
     }
 
     /*

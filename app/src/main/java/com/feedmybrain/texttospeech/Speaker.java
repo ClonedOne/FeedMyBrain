@@ -27,6 +27,10 @@ public class Speaker implements OnInitListener {
         return allowed;
     }
 
+    public TextToSpeech getTts() {
+        return tts;
+    }
+
     public void allow(boolean allowed){
         this.allowed = allowed;
     }
@@ -49,10 +53,10 @@ public class Speaker implements OnInitListener {
         // and the user has allowed speech
 
         if(ready && allowed) {
-            HashMap<String, String> hash = new HashMap<String,String>();
-            hash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
-                    String.valueOf(AudioManager.STREAM_NOTIFICATION));
-            tts.speak(text, TextToSpeech.QUEUE_ADD, hash);
+            //HashMap<String, String> hash = new HashMap<String,String>();
+            //hash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
+            //        String.valueOf(AudioManager.STREAM_NOTIFICATION));
+            tts.speak(text, TextToSpeech.QUEUE_ADD, null, text);
         }
     }
 
@@ -60,10 +64,15 @@ public class Speaker implements OnInitListener {
         tts.playSilence(duration, TextToSpeech.QUEUE_ADD, null);
     }
 
+    public void stop() {
+        tts.stop();
+    }
+
     // Free up resources
     public void destroy(){
         tts.stop();
         tts.shutdown();
     }
+
 
 }
