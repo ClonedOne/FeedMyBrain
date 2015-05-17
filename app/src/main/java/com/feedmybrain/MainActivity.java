@@ -151,7 +151,12 @@ public class MainActivity extends Activity implements RestResponse {
                             Category c = new Category(cat.getString("id"), cat.getString("label"));
                             cats.add(c);
                         }
-                        Subscription s = new Subscription(subsc.getString("id"), subsc.getString("title"),  subsc.getString("website"), cats);
+                        // get website
+                        String website = "";
+                        if (subsc.has("website")) {
+                            website = subsc.getString("website");
+                        }
+                        Subscription s = new Subscription(subsc.getString("id"), subsc.getString("title"), website, cats);
                         feed.getSubscriptions().add(s);
                     }
                     // Now we get the feed for each subscription
@@ -167,46 +172,47 @@ public class MainActivity extends Activity implements RestResponse {
             Log.d(Constants.DEBUG_NETWORK_TAG, ""+response);
             // Stream request
             try {
-                Log.d(Constants.DEBUG_NETWORK_TAG, "stream != null");
-                JSONObject stream = new JSONObject(response);
-                String subscription = stream.getString("id");
-                String website = stream.getString("title");
-                LinkedList<Article> articles = new LinkedList<Article>();
-                JSONArray items = stream.getJSONArray("items");
-                for (int i = 0; i < items.length(); i++) {
-                    JSONObject streamElem = items.getJSONObject(i);
-                    LinkedList<String> ks = new LinkedList<String>();
-                    // getting the keywords list
-                    if (streamElem.has("keywords")) {
-                        JSONArray keywords = streamElem.getJSONArray("keywords");
-                        for (int j = 0; j < keywords.length(); j++) {
-                            String k = keywords.getString(j);
-                            ks.add(k);
+                if (response != null) {
+                    Log.d(Constants.DEBUG_NETWORK_TAG, "stream != null");
+                    JSONObject stream = new JSONObject(response);
+                    String subscription = stream.getString("id");
+                    String website = stream.getString("title");
+                    LinkedList<Article> articles = new LinkedList<Article>();
+                    JSONArray items = stream.getJSONArray("items");
+                    for (int i = 0; i < items.length(); i++) {
+                        JSONObject streamElem = items.getJSONObject(i);
+                        LinkedList<String> ks = new LinkedList<String>();
+                        // getting the keywords list
+                        if (streamElem.has("keywords")) {
+                            JSONArray keywords = streamElem.getJSONArray("keywords");
+                            for (int j = 0; j < keywords.length(); j++) {
+                                String k = keywords.getString(j);
+                                ks.add(k);
+                            }
                         }
+                        // getting the categories list
+                        JSONArray categs = streamElem.getJSONArray("categories");
+                        LinkedList<Category> cats = new LinkedList<Category>();
+                        for (int j = 0; j < categs.length(); j++) {
+                            JSONObject cat = categs.getJSONObject(j);
+                            Category c = new Category(cat.getString("id"), cat.getString("label"));
+                            cats.add(c);
+                        }
+                        // getting the author
+                        String author = "";
+                        if (streamElem.has("author")) {
+                            author = streamElem.getString("author");
+                        }
+                        // getting the content
+                        String content = "";
+                        if (streamElem.has("content")) {
+                            content = streamElem.getJSONObject("content").getString("content");
+                        }
+                        Article art = new Article(streamElem.getString("id"), ks, streamElem.getString("title"), streamElem.getLong("published"), author, cats, content, website);
+                        articles.add(art);
                     }
-                    // getting the categories list
-                    JSONArray categs = streamElem.getJSONArray("categories");
-                    LinkedList<Category> cats = new LinkedList<Category>();
-                    for (int j = 0; j < categs.length(); j++) {
-                        JSONObject cat = categs.getJSONObject(j);
-                        Category c = new Category(cat.getString("id"), cat.getString("label"));
-                        cats.add(c);
-                    }
-                    // getting the author
-                    String author = "";
-                    if (streamElem.has("author")) {
-                        author = streamElem.getString("author");
-                    }
-                    // getting the content
-                    String content = "";
-                    if (streamElem.has("content")) {
-                        content = streamElem.getJSONObject("content").getString("content");
-                    }
-                    Article art = new Article(streamElem.getString("id"), ks, streamElem.getString("title"), streamElem.getLong("published"), author, cats, content, website);
-                    articles.add(art);
+                    feed.getArticlesFeed().put(subscription, articles);
                 }
-                feed.getArticlesFeed().put(subscription, articles);
-
             } catch (JSONException je) {
                 je.printStackTrace();
             }
@@ -222,6 +228,7 @@ public class MainActivity extends Activity implements RestResponse {
     @Override
     protected void onDestroy() {
         tgDevice.close();
+        speaker.destroy();
         super.onDestroy();
     }
 
@@ -236,7 +243,7 @@ public class MainActivity extends Activity implements RestResponse {
             articles = entry.getValue();
             curKey = entry.getKey();
             for (Article art : articles){
-                Log.d("ARTICLEDBG", "article is = " + art.toString());
+               // Log.d("ARTICLEDBG", "article is = " + art.toString());
                 speaker.speak(art.toString());
                 if (blink == 1)
                     break;

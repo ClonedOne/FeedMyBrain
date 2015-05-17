@@ -62,6 +62,7 @@ public class Speaker implements OnInitListener {
 
     // Free up resources
     public void destroy(){
+        tts.stop();
         tts.shutdown();
     }
 
