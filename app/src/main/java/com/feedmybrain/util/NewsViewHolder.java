@@ -14,6 +14,7 @@ import com.feedmybrain.R;
 public class NewsViewHolder extends RecyclerView.ViewHolder  {
 
 protected View view;
+protected TextView news_website;
 protected TextView news_title;
 protected TextView news_text;
 protected TextView news_published;
@@ -23,6 +24,7 @@ protected TextView news_author;
     public NewsViewHolder (View v) {
         super(v);
         view = v;
+        news_website = (TextView) v.findViewById(R.id.news_website);
         news_title = (TextView)  v.findViewById(R.id.news_title);
         news_text = (TextView)  v.findViewById(R.id.news_text);
         news_published = (TextView) v.findViewById(R.id.news_published);

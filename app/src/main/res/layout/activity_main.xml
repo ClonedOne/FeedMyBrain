@@ -7,7 +7,7 @@
 
 
 	<android.support.v7.widget.RecyclerView
-		android:id="@+id/field_list"
+		android:id="@+id/news_list"
 		android:paddingLeft="2dp"
 		android:paddingRight="2dp"
 		android:layout_width="match_parent"
@@ -24,6 +24,7 @@
 		android:textColor="@color/primary_text_color"
 		android:textSize="24sp"
 		android:textStyle="bold"
+		android:onClick="speakit"
 		android:id="@+id/speechToggle"
 		android:text="Speech Toggle"
 		android:layout_weight="4"/>

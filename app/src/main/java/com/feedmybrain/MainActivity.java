@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,15 +36,16 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+import com.feedmybrain.util.NewsAdapter;
 import com.neurosky.thinkgear.TGDevice;
 import com.neurosky.thinkgear.*;
 
 public class MainActivity extends Activity implements RestResponse {
 
-    private final int CHECK_CODE = 0x1; // code passed to startActivityOnResult
-    private final int LONG_DURATION = 5000; // used in the pause method
-    private final int SHORT_DURATION = 1200; // used in the pause method
+    protected int blink = 0;
+    protected int attention = 0;
 
     private Speaker speaker; // speaker object
 
@@ -52,12 +55,15 @@ public class MainActivity extends Activity implements RestResponse {
     private FeedlyFeed feed; // object that contains feedly data
 
     private String textToRead;
-    protected String tv;
     private String spokenText;
     protected TGDevice tgDevice;
     private BluetoothAdapter btAdapter;
     private MyBTHandler handler;
     private static final int SPEECH_REQUEST_CODE = 0;
+
+    private RecyclerView mRecyclerView;
+    private NewsAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +74,14 @@ public class MainActivity extends Activity implements RestResponse {
 	    textToRead = "Text to be read";
 
 
+        //card view initialization
+        mRecyclerView = (RecyclerView) findViewById(R.id.news_list);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
         //checkTTS();
-	speaker = new Speaker(this);
+	    speaker = new Speaker(this);
         speaker.allow(true);
 
 
@@ -189,6 +201,7 @@ public class MainActivity extends Activity implements RestResponse {
                     articles.add(art);
                 }
                 feed.getArticlesFeed().put(subscription, articles);
+
             } catch (JSONException je) {
                 je.printStackTrace();
             }
@@ -198,6 +211,7 @@ public class MainActivity extends Activity implements RestResponse {
     @Override
     public void onStart() {
         super.onStart();
+
     }
 
     @Override
@@ -210,7 +224,25 @@ public class MainActivity extends Activity implements RestResponse {
         displaySpeechRecognizer();
     }
     public void speakBrain (){
-        speaker.speak(textToRead);
+        LinkedList<Article> articles = new LinkedList<>();
+        String curKey = "";
+        while (feed.getArticlesFeed().size() > 0)
+        for (HashMap.Entry<String, LinkedList<Article>> entry : feed.getArticlesFeed().entrySet()) {
+            articles = entry.getValue();
+            curKey = entry.getKey();
+            for (Article art : articles){
+                speaker.speak(art.toString());
+                if (blink == 1)
+                    break;
+            }
+            if (blink == 1) {
+                blink = 0;
+                break;
+            }
+        }
+        feed.getArticlesFeed().remove(curKey);
+
+
     }
 
     @Override

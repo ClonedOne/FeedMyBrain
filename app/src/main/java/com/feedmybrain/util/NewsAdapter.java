@@ -37,7 +37,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsViewHolder> {
 
         //    Log.d("IMGDBG", "IMAGE NUMBER IS = " + imageIds.getResourceId(ci.getImg(), -1));
         //    Log.d("IMGDBG", "IMAGE REFERENCE WAS = " + ci.getImg());
-
+        fieldListViewHolder.news_website.setText("News by: " + ci.getWebsite());
         fieldListViewHolder.news_title.setText(ci.getTitle());
         fieldListViewHolder.news_text.setText(ci.getContent());
         fieldListViewHolder.news_author.setText(ci.getAuthor());

@@ -91,4 +91,12 @@ public class Article {
     public void setWebsite(String website) {
         this.website = website;
     }
+
+    public String toString(){
+        String res ="";
+        res = res + "Article from: " + getWebsite() + ". From author: " + getAuthor() + ". " +
+                "Title: " + getTitle() + ". ";
+        return res;
+    }
+
 }
