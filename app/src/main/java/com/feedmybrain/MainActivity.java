@@ -153,6 +153,7 @@ public class MainActivity extends Activity implements RestResponse {
                 Log.d(Constants.DEBUG_NETWORK_TAG, "stream != null");
                 JSONObject stream = new JSONObject(response);
                 String subscription = stream.getString("id");
+                String website = stream.getString("title");
                 LinkedList<Article> articles = new LinkedList<Article>();
                 JSONArray items = stream.getJSONArray("items");
                 for (int i = 0; i < items.length(); i++) {
@@ -181,10 +182,10 @@ public class MainActivity extends Activity implements RestResponse {
                     }
                     // getting the content
                     String content = "";
-                    if (streamElem.has("summary")) {
-                        content = streamElem.getJSONObject("summary").getString("content");
+                    if (streamElem.has("content")) {
+                        content = streamElem.getJSONObject("content").getString("content");
                     }
-                    Article art = new Article(streamElem.getString("id"), ks, streamElem.getString("title"), streamElem.getLong("published"), author, cats, content);
+                    Article art = new Article(streamElem.getString("id"), ks, streamElem.getString("title"), streamElem.getLong("published"), author, cats, content, website);
                     articles.add(art);
                 }
                 feed.getArticlesFeed().put(subscription, articles);

@@ -14,8 +14,9 @@ public class Article {
     private String author;
     private LinkedList<Category> categories;
     private String content;
+    private String website;
 
-    public Article(String id, LinkedList<String> keywords, String title, Long published, String author, LinkedList<Category> categories, String content) {
+    public Article(String id, LinkedList<String> keywords, String title, Long published, String author, LinkedList<Category> categories, String content, String website) {
         this.id = id;
         this.keywords = keywords;
         this.title = title;
@@ -23,6 +24,7 @@ public class Article {
         this.author = author;
         this.categories = categories;
         this.content = content;
+        this.website = website;
     }
 
 
@@ -82,4 +84,11 @@ public class Article {
         this.content = content;
     }
 
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
 }
