@@ -21,8 +21,8 @@ public class MyBTHandler extends Handler{
 
     @Override
     public void handleMessage(Message msg) {
-        Log.d("BLUETOOTH", "MESSAGE RECIVED");
-        Log.d("DEVICEDBG", "" + msg.arg1);
+        Log.v("BLUETOOTH", "MESSAGE RECIVED");
+        Log.v("DEVICEDBG", "" + msg.arg1 + " - " + msg.arg2);
         switch (msg.what) {
             case TGDevice.MSG_STATE_CHANGE:
                 switch (msg.arg1) {

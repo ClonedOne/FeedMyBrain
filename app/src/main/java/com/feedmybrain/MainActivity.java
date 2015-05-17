@@ -26,6 +26,7 @@ import com.feedmybrain.feedlyclient.FeedlyFeed;
 import com.feedmybrain.feedlyclient.Subscription;
 import com.feedmybrain.interfaces.RestResponse;
 import com.feedmybrain.texttospeech.Speaker;
+import com.feedmybrain.util.BTListenThread;
 import com.feedmybrain.util.Constants;
 import com.feedmybrain.util.FeedMyBrainApplication;
 
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.feedmybrain.util.NewsAdapter;
+import com.feedmybrain.util.SpeakThread;
 import com.neurosky.thinkgear.TGDevice;
 import com.neurosky.thinkgear.*;
 
@@ -56,7 +58,7 @@ public class MainActivity extends Activity implements RestResponse {
 
     private String textToRead;
     private String spokenText;
-    protected TGDevice tgDevice;
+    public TGDevice tgDevice;
     private BluetoothAdapter btAdapter;
     private MyBTHandler handler;
     private static final int SPEECH_REQUEST_CODE = 0;
@@ -85,9 +87,9 @@ public class MainActivity extends Activity implements RestResponse {
         speaker.allow(true);
 
 
-        handler = new MyBTHandler(this);
+       // handler = new MyBTHandler(this);
 
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
+      /*  btAdapter = BluetoothAdapter.getDefaultAdapter();
         if(btAdapter != null) {
             Log.d("BTOOTH","Bluettoth adapter is NOT null");
             tgDevice = new TGDevice(btAdapter, handler);
@@ -95,7 +97,10 @@ public class MainActivity extends Activity implements RestResponse {
         }
         else {
             Log.d("BTOOTH","Bluettoth adapter is NULL");
-        }
+        }*/
+
+        BTListenThread btThread = new BTListenThread(this);
+        btThread.run();
 
         displaySpeechRecognizer();
 
@@ -223,7 +228,7 @@ public class MainActivity extends Activity implements RestResponse {
     public void speakit(View view) {
         displaySpeechRecognizer();
     }
-    public void speakBrain (){
+    public void speakBrain () throws Exception{
         LinkedList<Article> articles = new LinkedList<>();
         String curKey = "";
         while (feed.getArticlesFeed().size() > 0)
@@ -231,6 +236,7 @@ public class MainActivity extends Activity implements RestResponse {
             articles = entry.getValue();
             curKey = entry.getKey();
             for (Article art : articles){
+                Log.d("ARTICLEDBG", "article is = " + art.toString());
                 speaker.speak(art.toString());
                 if (blink == 1)
                     break;
@@ -287,7 +293,12 @@ public class MainActivity extends Activity implements RestResponse {
             spokenText = results.get(0);
             // Do something with spokenText
             if (spokenText.equalsIgnoreCase("speak")){
-                speakBrain();
+                try {
+                    speakBrain();
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
             }else {
                 displaySpeechRecognizer();
             }
