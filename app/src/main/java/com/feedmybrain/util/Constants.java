@@ -9,7 +9,7 @@ public class Constants {
         feedly api cconstants
      */
     public static final String feedlyApi = "http://cloud.feedly.com/"; // feedly api end-point
-    public static final String authToken = "AjBXPM17ImEiOiJGZWVkbHkgRGV2ZWxvcGVyIiwiZSI6MTQzOTYyNTA2NzA1NSwiaSI6ImI1NTY3OWQyLTFkZWUtNGMzOC1hZWEzLWExMDc3YjY2NmVmYiIsInAiOjgsInQiOjEsInYiOiJwcm9kdWN0aW9uIiwidyI6IjIwMTUuMjEiLCJ4Ijoic3RhbmRhcmQifQ:feedlydev"; // authentication token
+    public static final String authToken = "AjDIJop7ImEiOiJGZWVkbHkgRGV2ZWxvcGVyIiwiZSI6MTQzOTYzMjQ2NjkyNCwiaSI6IjA1M2I2NThjLTVmZGYtNGMwZS04NDVmLTQyNjZkNDNmZjIwMiIsInAiOjYsInQiOjEsInYiOiJwcm9kdWN0aW9uIiwidyI6IjIwMTUuMjEiLCJ4Ijoic3RhbmRhcmQifQ:feedlydev"; // authentication token
     public static final String categoriesRequestAPI = feedlyApi + "v3/categories";
     public static final String subscriptionsRequestAPI = feedlyApi + "v3/subscriptions";
     public static final String subscriptionStreamAPI = feedlyApi + "v3/streams/contents";
