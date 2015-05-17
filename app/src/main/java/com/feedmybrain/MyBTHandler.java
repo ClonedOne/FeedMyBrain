@@ -64,7 +64,7 @@ public class MyBTHandler extends Handler{
                 break;
             case TGDevice.MSG_ATTENTION:
                 int att = msg.arg1;
-                if (att > 80) {
+                if (att > 75) {
                     //context.speakBrain();
                     context.attention = 1;
                 }
@@ -74,7 +74,7 @@ public class MyBTHandler extends Handler{
 
                 break;
             case TGDevice.MSG_BLINK:
-                if (msg.arg1 > 80) {
+                if (msg.arg1 > 75) {
                     //context.speakBrain();
                     context.blink = 1;
                 }
