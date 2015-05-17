@@ -24,8 +24,10 @@ public class Article {
     private LinkedList<Category> categories;
     private String content;
     private String website;
+    private String href;
 
-    public Article(String id, LinkedList<String> keywords, String title, Long published, String author, LinkedList<Category> categories, String content, String website) {
+    public Article(String id, LinkedList<String> keywords, String title, Long published, String author, LinkedList<Category> categories, String content,
+                   String website, String href) {
         this.id = id;
         this.keywords = keywords;
         this.title = title;
@@ -34,6 +36,7 @@ public class Article {
         this.categories = categories;
         this.content = content;
         this.website = website;
+        this.href = href;
     }
 
 
@@ -109,6 +112,14 @@ public class Article {
 
     public void setWebsite(String website) {
         this.website = website;
+    }
+
+    public String getHref() {
+        return href;
+    }
+
+    public void setHref(String href) {
+        this.href = href;
     }
 
     public String toString(){
